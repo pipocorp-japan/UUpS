@@ -1,1 +1,113 @@
-<!doctype html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yu Satoのアプリ</title>
+  <style>
+    body {
+      font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+      margin: 0;
+      padding: 40px 10%;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .app-name {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .code-name {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 16px;
+    }
+    .version {
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+    .btn {
+      background: #007aff;
+      color: white;
+      text-decoration: none;
+      text-align: center;
+      padding: 10px 0;
+      border-radius: 10px;
+      transition: background .2s ease;
+    }
+    .btn:hover {
+      background: #0058d1;
+    }
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      color: #888;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>Yu Satoのアプリ</h1>
+  <div class="grid" id="apps"></div>
+  <footer>©2025 Yu Sato</footer>
+
+  <script>
+    const apps = [
+      { name: "Downloader", path: "Dow", codename: true },
+      { name: "Launcher", path: "Lau", codename: true },
+      { name: "Safari", path: "RPB", codename: false },
+      { name: "ZipTool", path: "Zip", codename: false }
+    ];
+
+    async function loadApp(app) {
+      const [url, ver, cn] = await Promise.all([
+        fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"),
+        fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"),
+        app.codename ? fetch(`${app.path}/latestCN.txt`).then(r => r.text()).catch(() => "") : ""
+      ]);
+
+      return `
+        <div class="card">
+          <div>
+            <div class="app-name">${app.name}</div>
+            ${cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
+            <div class="version">Version: ${ver}</div>
+          </div>
+          <a class="btn" href="${url}" target="_blank">Download</a>
+        </div>
+      `;
+    }
+
+    (async () => {
+      const container = document.getElementById("apps");
+      const html = await Promise.all(apps.map(loadApp));
+      container.innerHTML = html.join("");
+    })();
+  </script>
+</body>
+</html>
