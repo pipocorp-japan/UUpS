@@ -49,7 +49,15 @@
     .version {
       font-size: 1rem;
       font-weight: 500;
-      margin-bottom: 16px;
+      /* detailを表示するためにマージンを調整 */
+      margin-bottom: 8px; 
+    }
+    /* 追加：詳細(detail)のスタイル */
+    .app-detail {
+      font-size: 1rem;
+      color: #333; /* バージョンより少し濃い色 */
+      line-height: 1.4;
+      margin-bottom: 16px; /* ボタンとの間隔を確保 */
     }
     .btn {
       background: #007aff;
@@ -78,14 +86,15 @@
 
   <script>
     const apps = [
-      { name: "Downloader", path: "Dow", codename: true },
-      { name: "Launcher", path: "Lau", codename: true },
-      { name: "Safari Ultimate", path: "RPBU", codename: true },
-      { name: "Safari Tiny", path: "RPBT", codename: true },
-      { name: "ZipTool", path: "Zip", codename: false }
+      { name: "Safari Ultimate", path: "RPBU", codename: true, detail: "プライベートの限界突破。" },
+      { name: "Safari Tiny", path: "RPBT", codename: true, detail: "軽さの極み。" },
+      { name: "Downloader", path: "Dow", codename: true, detail: "ダウンロードできないを可能に。" },
+      { name: "Launcher", path: "Lau", codename: true, detail: "アプリを直観的に。" },
+      { name: "ZipTool", path: "Zip", codename: false, detail: "Zipの職人。" }
     ];
 
     async function loadApp(app) {
+      // ファイルの取得は変更なし
       const [url, ver, cn] = await Promise.all([
         fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"),
         fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"),
@@ -98,6 +107,7 @@
             <div class="app-name">${app.name}</div>
             ${cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
             <div class="version">Version: ${ver}</div>
+            <div class="app-detail">${app.detail}</div>
           </div>
           <a class="btn" href="${url}" target="_blank">Download</a>
         </div>
