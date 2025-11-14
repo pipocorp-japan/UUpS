@@ -42,6 +42,15 @@
       /* アニメーション適用 */
       animation: color-shift 20s ease infinite; 
     }
+    .gradient {
+      background: linear-gradient(90deg, #00aaff, #a000ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      display: inline-block;
+    }
+
     h1 {
       text-align: center;
       margin-bottom: 40px;
@@ -53,8 +62,10 @@
       gap: 20px;
     }
     
+    
     /* カード: すりガラス効果と屈折感を強調 */
     .card {
+      position: relative; /* ::beforeのために必要 */
       /* ブラー値を調整: テキストの視認性を向上 */
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px); 
@@ -73,7 +84,22 @@
       flex-direction: column;
       justify-content: space-between;
       transition: transform .3s ease, box-shadow .3s ease, background .3s ease;
+      /* ノイズテクスチャのためにz-indexを調整することも可能ですが、今回は不要 */
     }
+    /* 追加されたノイズテクスチャ */
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url('https://grainy-gradients.vercel.app/noise.svg');
+      opacity: 0.3;
+      mix-blend-mode: overlay;
+      border-radius: inherit;
+      filter: blur(4px);
+      pointer-events: none;
+      mix-blend-mode: soft-light;
+    }
+
     .card:hover {
       /* ホバー時の浮き上がりを調整 */
       transform: translateY(-6px); 
@@ -82,7 +108,25 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.9); /* ホバー時により強い光沢 */
       background: rgba(255, 255, 255, 0.7); 
     }
-    
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+
+      /* 上のハイライト（とろり反射） */
+      background: linear-gradient(
+        rgba(255,255,255,0.25) 0%,
+        rgba(255,255,255,0.10) 15%,
+        rgba(255,255,255,0.03) 30%,
+        rgba(255,255,255,0) 60%
+      );
+
+      mix-blend-mode: screen;
+      opacity: 0.7; /* ←強いと思ったら0.6～0.8に調整して */
+    }
+
     /* テキストスタイル */
     .app-name {
       font-size: 1.4rem;
@@ -152,15 +196,45 @@
       }
       .card {
         /* ダークモード用のGlassmorphism */
-        background: rgba(45, 45, 50, 0.6); 
+        background: rgba(45, 45, 50, 0.3); 
         box-shadow: 
             0 6px 20px rgba(0,0,0,0.6), /* 外側の濃い影 */
             inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* エッジの光沢 */
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
+      .card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: url('https://grainy-gradients.vercel.app/noise.svg');
+        opacity: 0.1;
+        filter: blur(4px); /* 粒を消して屈折だけ残る */
+        mix-blend-mode: overlay;
+        border-radius: inherit;
+        pointer-events: none;
+        mix-blend-mode: soft-light;
+      }
       .card:hover {
         box-shadow: 0 12px 30px rgba(0,0,0,0.9);
         background: rgba(45, 45, 50, 0.8);
+      }
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        pointer-events: none;
+
+        /* 上のハイライト（とろり反射） */
+        background: linear-gradient(
+          rgba(255,255,255,0.25) 0%,
+          rgba(255,255,255,0.10) 15%,
+          rgba(255,255,255,0.03) 30%,
+          rgba(255,255,255,0) 60%
+        );
+
+        mix-blend-mode: screen;
+        opacity: 0.4; /* ←強いと思ったら0.6～0.8に調整して */
       }
       /* テキストカラーの調整 (視認性向上) */
       .code-name, footer {
@@ -171,10 +245,12 @@
       }
       /* ボタンは視認性が高いため変更なし */
     }
+    
   </style>
 </head>
 <body>
   <h1>Yu Satoのアプリ</h1>
+  <p class="card"><span class="gradient">With my Liquid Glass, I made this in 6 hours</span></p>
   <div class="grid" id="apps"></div>
   <footer>©2025 Yu Sato</footer>
 
