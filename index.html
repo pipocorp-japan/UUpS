@@ -14,7 +14,7 @@
       0% { background-position: 0% 0%; }
       50% { background-position: 100% 100%; }
       100% { background-position: 0% 0%; }
-    }
+    } /* 閉じ括弧は正しくあります */
 
     /*
      * ----------------------------------------------------
@@ -26,7 +26,7 @@
       color: #1d1d1f;
       margin: 0;
       padding: 40px 10%;
-      min-height: 100vh; /* アニメーションのために最小高さを設定 */
+      min-height: 100vh;
       
       /* 背景全体: 4色パステルグラデーションとアニメーション */
       background-image: linear-gradient(
@@ -37,10 +37,10 @@
         #e0ffe0  /* パステルグリーン */
       );
       /* グラデーションを大きくして滑らかに動かす */
-      background-size: 400% 400%; 
-      background-attachment: fixed; 
+      background-size: 400% 400%;
+      background-attachment: fixed;
       /* アニメーション適用 */
-      animation: color-shift 20s ease infinite; 
+      animation: color-shift 20s ease infinite;
     }
     .gradient {
       background: linear-gradient(90deg, #00aaff, #a000ff);
@@ -68,13 +68,13 @@
       position: relative; /* ::beforeのために必要 */
       /* ブラー値を調整: テキストの視認性を向上 */
       backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px); 
+      -webkit-backdrop-filter: blur(10px);
       /* 背景色を少し透明にして、後ろの背景が透けるように */
       background: rgba(255, 255, 255, 0.5);
       border-radius: 20px; /* 角をさらに丸く */
       
       /* 影とインナーシャドウで光の反射（屈折感）を表現 */
-      box-shadow: 
+      box-shadow:
         0 6px 20px rgba(0,0,0,0.1), /* 外側の影 */
         inset 0 0 0 1px rgba(255, 255, 255, 0.6); /* ガラスのエッジの光沢 */
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -102,11 +102,11 @@
 
     .card:hover {
       /* ホバー時の浮き上がりを調整 */
-      transform: translateY(-6px); 
-      box-shadow: 
+      transform: translateY(-6px);
+      box-shadow:
         0 12px 30px rgba(0,0,0,0.25), /* 浮いた時の濃い影 */
         inset 0 0 0 1px rgba(255, 255, 255, 0.9); /* ホバー時により強い光沢 */
-      background: rgba(255, 255, 255, 0.7); 
+      background: rgba(255, 255, 255, 0.7);
     }
     .card::after {
       content: "";
@@ -141,7 +141,7 @@
     .version {
       font-size: 1rem;
       font-weight: 500;
-      margin-bottom: 8px; 
+      margin-bottom: 8px;
     }
     .app-detail {
       font-size: 1rem;
@@ -152,7 +152,7 @@
     
     /* ボタン */
     .btn {
-      background: #007aff; 
+      background: #007aff;
       color: white;
       text-decoration: none;
       text-align: center;
@@ -179,10 +179,10 @@
      */
     @media (prefers-color-scheme: dark) {
       body {
-        color: #f5f5f7; 
+        color: #f5f5f7;
         /* ダークモード用の背景を調整: 明るいトーンの4色グラデーションとアニメーション */
         background-image: linear-gradient(
-          135deg, 
+          135deg,
           #503037, /* 明るくした暗いパステルレッド */
           #304557, /* 明るくした暗いパステルブルー */
           #575230, /* 明るくした暗いパステルイエロー */
@@ -196,8 +196,8 @@
       }
       .card {
         /* ダークモード用のGlassmorphism */
-        background: rgba(45, 45, 50, 0.3); 
-        box-shadow: 
+        background: rgba(45, 45, 50, 0.3);
+        box-shadow:
             0 6px 20px rgba(0,0,0,0.6), /* 外側の濃い影 */
             inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* エッジの光沢 */
         border: 1px solid rgba(255, 255, 255, 0.05);
@@ -215,6 +215,7 @@
         mix-blend-mode: soft-light;
       }
       .card:hover {
+        transform: translateY(-6px);
         box-shadow: 0 12px 30px rgba(0,0,0,0.9);
         background: rgba(45, 45, 50, 0.8);
       }
@@ -256,26 +257,49 @@
 
   <script>
     const apps = [
-      { name: "Safari Ultimate", path: "RPBU", codename: true, detail: "プライベートの限界突破。" },
-      { name: "Safari Tiny", path: "RPBT", codename: true, detail: "軽さの極み。" },
+      { name: "Whisper Ultimate", path: "RPBU", codename: true, detail: "プライベートの限界突破。" },
+      { name: "Whisper Tiny", path: "RPBT", codename: true, detail: "軽さの極み。" },
       { name: "Downloader", path: "Dow", codename: true, detail: "ダウンロードできないを可能に。" },
       { name: "Launcher", path: "Lau", codename: true, detail: "アプリを直観的に。" },
       { name: "ZipTool", path: "Zip", codename: false, detail: "Zipの職人。" }
     ];
 
     async function loadApp(app) {
-      // ファイルの取得は変更なし
-      const [url, ver, cn] = await Promise.all([
-        fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"),
-        fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"),
-        app.codename ? fetch(`${app.path}/latestCN.txt`).then(r => r.text()).catch(() => "") : ""
-      ]);
+      // 全てのfetch操作をPromiseの配列として定義
+      const fetchPromises = [
+        fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"), // 0: URL
+        fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"), // 1: Version
+      ];
+      
+      // codenameを持つアプリの場合は、さらに2つのfetchを追加
+      if (app.codename) {
+        fetchPromises.push(
+          fetch(`${app.path}/latestCN.txt`).then(r => r.text()).catch(() => ""), // 2: Codename
+          fetch(`${app.path}/latestNA.txt`).then(r => r.text()).catch(() => app.name) // 3: App Name
+        );
+      }
+
+      // すべてのPromiseを並列実行
+      const results = await Promise.all(fetchPromises);
+      
+      const url = results[0].trim();
+      const ver = results[1].trim();
+      
+      let cn = "";
+      let fetchedAppName = app.name;
+
+      if (app.codename) {
+        cn = results[2].trim();
+        fetchedAppName = results[3].trim();
+      }
+      
+      const displayName = fetchedAppName || app.name; // fetchedAppNameが空の場合はapp.nameに戻す
 
       return `
         <div class="card">
           <div>
-            <div class="app-name">${app.name}</div>
-            ${cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
+            <div class="app-name">${displayName}</div>
+            ${app.codename && cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
             <div class="version">Version: ${ver}</div>
             <div class="app-detail">${app.detail}</div>
           </div>
