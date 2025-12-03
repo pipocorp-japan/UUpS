@@ -1,0 +1,37 @@
+[
+  {
+    "name": "Whisper Ultimate",
+    "path": "RPBU",
+    "codename": true,
+    "detail": "プライベートの限界突破。",
+    "category": ["internet"]
+  },
+  {
+    "name": "Whisper Kernel",
+    "path": "RPBK",
+    "codename": true,
+    "detail": "軽さの極み。更新機能を最小限に",
+    "category": ["internet"]
+  },
+  {
+    "name": "Downloader",
+    "path": "Dow",
+    "codename": true,
+    "detail": "ダウンロードできないを可能に。",
+    "category": ["internet", "utility"]
+  },
+  {
+    "name": "Launcher",
+    "path": "Lau",
+    "codename": true,
+    "detail": "アプリを直観的に。",
+    "category": ["utility"]
+  },
+  {
+    "name": "ZipTool",
+    "path": "Zip",
+    "codename": false,
+    "detail": "Zipの職人。",
+    "category": ["utility"]
+  }
+]
