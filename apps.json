@@ -4,34 +4,39 @@
     "path": "RPBU",
     "codename": true,
     "detail": "プライベートの限界突破。",
-    "category": ["internet"]
+    "category": ["internet"],
+    "description": "Safariと同じWebエンジンをそのまま使いながら、閲覧履歴だけを残さないように仕組んだ軽量ブラウザ。Cookieやログイン状態は通常通り保持されるため、普段の作業の延長で“履歴を残したくない時だけ使う”という自然な使い分けができる。タブ機能をあえて排除し、1画面でサクッと調べたい場面に特化。Safariと同じ感覚で扱える、静かなサブブラウザ。"
   },
   {
     "name": "Whisper Kernel",
     "path": "RPBK",
     "codename": true,
     "detail": "軽さの極み。更新機能を最小限に",
-    "category": ["internet"]
+    "category": ["internet"],
+    "description": "Whisperシリーズの軽量特化モデル。Safari WebViewを使い、Cookie・ログイン状態などはそのまま維持しつつ、履歴だけ残さないというミニマムな動作を実装。タブ機能や複雑なUIを削っているため、旧端末でも動作が軽い。検索・辞書引き・ちょい調べに向けた“瞬発力重視のサブブラウザ”。"
   },
   {
     "name": "Downloader",
     "path": "Dow",
     "codename": true,
     "detail": "ダウンロードできないを可能に。",
-    "category": ["internet", "utility"]
+    "category": ["internet", "utility"],
+    "description": "Safariが通常の方法では保存できない種類のファイルでも、ショートカット経由ならダウンロードできるケースがあるという仕組みを活用したツール。URLを指定するだけで保存処理を実行でき、動画・音声・ZIPなど幅広い形式に対応。Safariで「保存ボタンが出ない」「開くだけで保存できない」といった場面を補うための実用アプリ。"
   },
   {
     "name": "Launcher",
     "path": "Lau",
     "codename": true,
     "detail": "アプリを直観的に。",
-    "category": ["utility"]
+    "category": ["utility"],
+    "description": "カテゴリ分けや整理機能などは搭載せず、アプリをワンタップで開くだけに全振りした超シンプルなランチャー。ショートカットから直接アプリを呼び出せるため、ホーム画面を探し回る手間を省きたい時に最適。余計なUIが一切なく、“とりあえず早く開きたい”場面専用の即効ツール。"
   },
   {
     "name": "ZipTool",
     "path": "Zip",
     "codename": true,
     "detail": "Zipの職人。",
-    "category": ["utility"]
+    "category": ["utility"],
+    "description": "機能はシンプルに「ZIP圧縮」と「ZIP解凍」だけ。余計な付加機能を載せず、ショートカットで素早く圧縮・展開する処理に特化させている。提出物のまとめ、データ送信前の軽量化、ZIPファイルの中身を取り出すといった場面で使いやすい、最短ルートのファイルツール。"
   }
 ]

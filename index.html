@@ -93,7 +93,9 @@
       gap: 20px;
     }
     
-    /* カードスタイル */
+    /* 
+     * カードスタイル 
+     */
     .card {
       position: relative;
       backdrop-filter: blur(10px);
@@ -109,6 +111,9 @@
       flex-direction: column;
       justify-content: space-between;
       transition: transform .3s ease, box-shadow .3s ease, background .3s ease, opacity 0.3s ease;
+      
+      /* 重要: オーバーレイがはみ出さないように隠す */
+      overflow: hidden; 
     }
     
     .card.hidden {
@@ -126,6 +131,7 @@
       filter: blur(4px);
       pointer-events: none;
       mix-blend-mode: soft-light;
+      z-index: 1; /* 背景ノイズ */
     }
 
     .card:hover {
@@ -149,6 +155,13 @@
       );
       mix-blend-mode: screen;
       opacity: 0.7;
+      z-index: 2; /* 光沢 */
+    }
+
+    /* コンテンツのレイヤー順序調整 */
+    .card-content {
+      position: relative;
+      z-index: 3;
     }
 
     .app-name {
@@ -166,13 +179,65 @@
       font-weight: 500;
       margin-bottom: 8px;
     }
+
+    /* 
+     * 詳細表示（ホバー/タップ）のスタイル 
+     */
+    .detail-wrapper {
+      /* オーバーレイの位置基準を親(.card)にするため、ここはstaticのまま */
+      margin-bottom: 16px;
+    }
+
     .app-detail {
       font-size: 1rem;
       color: #333;
       line-height: 1.4;
-      margin-bottom: 16px;
+      
+      /* インタラクションできることを示すスタイル */
+      cursor: help;
+      text-decoration: underline dotted rgba(0,0,0,0.4);
+      text-underline-offset: 4px;
+      display: inline-block;
+      transition: color 0.2s;
     }
-    
+    .app-detail:hover {
+      color: #007aff;
+    }
+
+    /* オーバーレイ（説明文） */
+    .description-overlay {
+      position: absolute;
+      inset: 0; /* カード全体を覆う */
+      
+      background: rgba(255, 255, 255, 0.9); /* 少し不透明度を高めて読みやすく */
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #1d1d1f;
+      text-align: left;
+      
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.98);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      z-index: 10; /* 最前面 */
+    }
+
+    /* トリガー：detail-wrapperをホバーまたはタップしたら表示 */
+    .detail-wrapper:hover .description-overlay,
+    .detail-wrapper:active .description-overlay {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
     .btn {
       background: #007aff;
       color: white;
@@ -182,6 +247,8 @@
       border-radius: 10px;
       font-weight: 600;
       transition: background .2s ease, transform .1s ease;
+      position: relative;
+      z-index: 3;
     }
     .btn:hover {
       background: #0058d1;
@@ -240,8 +307,22 @@
       .card::after {
         opacity: 0.4;
       }
+      
       .code-name, footer { color: #c0c0c0; }
-      .app-detail { color: #e0e0e0; }
+      
+      .app-detail { 
+        color: #e0e0e0;
+        text-decoration-color: rgba(255,255,255,0.4);
+      }
+      .app-detail:hover {
+        color: #0a84ff;
+      }
+      
+      /* ダークモードのオーバーレイ */
+      .description-overlay {
+        background: rgba(30, 30, 35, 0.95);
+        color: #f0f0f0;
+      }
     }
     
   </style>
@@ -299,13 +380,24 @@
       
       const displayName = fetchedAppName || app.name;
       const categories = Array.isArray(app.category) ? app.category.join(' ') : app.category;
+      
+      // JSONのdescriptionを使用（なければdetailで代用）
+      const description = app.description || app.detail;
 
       return `
         <div class="card" data-category="${categories}">
-          <div>
+          <div class="card-content">
             <div class="app-name">${displayName} ${ver}</div>
             ${app.codename && cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
-            <div class="app-detail">${app.detail}</div>
+            
+            <!-- 詳細ラッパー: これをホバーするとdescription-overlayが表示される -->
+            <div class="detail-wrapper">
+              <div class="app-detail">${app.detail}</div>
+              <div class="description-overlay">
+                ${description}
+              </div>
+            </div>
+            
           </div>
           <a class="btn" href="${url}" target="_blank">入手</a>
         </div>
@@ -326,7 +418,7 @@
         }
         const apps = await response.json();
 
-        // 2. 各アプリのカード情報を生成 (latestV.txtなどの取得)
+        // 2. 各アプリのカード情報を生成
         const html = await Promise.all(apps.map(loadApp));
         container.innerHTML = html.join("");
 
