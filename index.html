@@ -14,11 +14,11 @@
       0% { background-position: 0% 0%; }
       50% { background-position: 100% 100%; }
       100% { background-position: 0% 0%; }
-    } /* 閉じ括弧は正しくあります */
+    }
 
     /*
      * ----------------------------------------------------
-     * グローバルスタイル (ライトモードのデフォルト)
+     * グローバルスタイル
      * ----------------------------------------------------
      */
     body {
@@ -28,18 +28,15 @@
       padding: 40px 10%;
       min-height: 100vh;
       
-      /* 背景全体: 4色パステルグラデーションとアニメーション */
       background-image: linear-gradient(
-        135deg, /* 斜め方向 */
-        #ffe0e6, /* パステルレッド */
-        #e0f7ff, /* パステルブルー */
-        #fff9e0, /* パステルイエロー */
-        #e0ffe0  /* パステルグリーン */
+        135deg,
+        #ffe0e6,
+        #e0f7ff,
+        #fff9e0,
+        #e0ffe0
       );
-      /* グラデーションを大きくして滑らかに動かす */
       background-size: 400% 400%;
       background-attachment: fixed;
-      /* アニメーション適用 */
       animation: color-shift 20s ease infinite;
     }
     .gradient {
@@ -53,40 +50,71 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
       font-weight: 600;
     }
+
+    /* 
+     * カテゴリフィルターボタン
+     */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 8px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #333;
+      backdrop-filter: blur(5px);
+      transition: all 0.3s ease;
+    }
+    .filter-btn:hover {
+      background: rgba(255, 255, 255, 0.7);
+      transform: translateY(-2px);
+    }
+    .filter-btn.active {
+      background: #007aff;
+      color: #fff;
+      border-color: #007aff;
+      box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
     }
     
-    
-    /* カード: すりガラス効果と屈折感を強調 */
+    /* カードスタイル */
     .card {
-      position: relative; /* ::beforeのために必要 */
-      /* ブラー値を調整: テキストの視認性を向上 */
+      position: relative;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
-      /* 背景色を少し透明にして、後ろの背景が透けるように */
       background: rgba(255, 255, 255, 0.5);
-      border-radius: 20px; /* 角をさらに丸く */
-      
-      /* 影とインナーシャドウで光の反射（屈折感）を表現 */
+      border-radius: 20px;
       box-shadow:
-        0 6px 20px rgba(0,0,0,0.1), /* 外側の影 */
-        inset 0 0 0 1px rgba(255, 255, 255, 0.6); /* ガラスのエッジの光沢 */
+        0 6px 20px rgba(0,0,0,0.1),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      
       padding: 24px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform .3s ease, box-shadow .3s ease, background .3s ease;
-      /* ノイズテクスチャのためにz-indexを調整することも可能ですが、今回は不要 */
+      transition: transform .3s ease, box-shadow .3s ease, background .3s ease, opacity 0.3s ease;
     }
-    /* 追加されたノイズテクスチャ */
+    
+    .card.hidden {
+      display: none;
+    }
+
     .card::before {
       content: "";
       position: absolute;
@@ -101,11 +129,10 @@
     }
 
     .card:hover {
-      /* ホバー時の浮き上がりを調整 */
       transform: translateY(-6px);
       box-shadow:
-        0 12px 30px rgba(0,0,0,0.25), /* 浮いた時の濃い影 */
-        inset 0 0 0 1px rgba(255, 255, 255, 0.9); /* ホバー時により強い光沢 */
+        0 12px 30px rgba(0,0,0,0.25),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.9);
       background: rgba(255, 255, 255, 0.7);
     }
     .card::after {
@@ -114,20 +141,16 @@
       inset: 0;
       border-radius: inherit;
       pointer-events: none;
-
-      /* 上のハイライト（とろり反射） */
       background: linear-gradient(
         rgba(255,255,255,0.25) 0%,
         rgba(255,255,255,0.10) 15%,
         rgba(255,255,255,0.03) 30%,
         rgba(255,255,255,0) 60%
       );
-
       mix-blend-mode: screen;
-      opacity: 0.7; /* ←強いと思ったら0.6～0.8に調整して */
+      opacity: 0.7;
     }
 
-    /* テキストスタイル */
     .app-name {
       font-size: 1.4rem;
       font-weight: 600;
@@ -150,7 +173,6 @@
       margin-bottom: 16px;
     }
     
-    /* ボタン */
     .btn {
       background: #007aff;
       color: white;
@@ -180,106 +202,88 @@
     @media (prefers-color-scheme: dark) {
       body {
         color: #f5f5f7;
-        /* ダークモード用の背景を調整: 明るいトーンの4色グラデーションとアニメーション */
         background-image: linear-gradient(
           135deg,
-          #503037, /* 明るくした暗いパステルレッド */
-          #304557, /* 明るくした暗いパステルブルー */
-          #575230, /* 明るくした暗いパステルイエロー */
-          #305730  /* 明るくした暗いパステルグリーン */
+          #503037, #304557, #575230, #305730
         );
-        background-size: 400% 400%;
-        animation: color-shift 20s ease infinite;
       }
-      h1 {
+      h1 { color: #fff; }
+      
+      .filter-btn {
+        background: rgba(45, 45, 50, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #e0e0e0;
+      }
+      .filter-btn:hover {
+        background: rgba(60, 60, 70, 0.8);
+      }
+      .filter-btn.active {
+        background: #0a84ff;
         color: #fff;
+        border-color: #0a84ff;
       }
+
       .card {
-        /* ダークモード用のGlassmorphism */
         background: rgba(45, 45, 50, 0.3);
         box-shadow:
-            0 6px 20px rgba(0,0,0,0.6), /* 外側の濃い影 */
-            inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* エッジの光沢 */
+            0 6px 20px rgba(0,0,0,0.6),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
       .card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: url('https://grainy-gradients.vercel.app/noise.svg');
         opacity: 0.1;
-        filter: blur(4px); /* 粒を消して屈折だけ残る */
-        mix-blend-mode: overlay;
-        border-radius: inherit;
-        pointer-events: none;
-        mix-blend-mode: soft-light;
       }
       .card:hover {
-        transform: translateY(-6px);
         box-shadow: 0 12px 30px rgba(0,0,0,0.9);
         background: rgba(45, 45, 50, 0.8);
       }
       .card::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        border-radius: inherit;
-        pointer-events: none;
-
-        /* 上のハイライト（とろり反射） */
-        background: linear-gradient(
-          rgba(255,255,255,0.25) 0%,
-          rgba(255,255,255,0.10) 15%,
-          rgba(255,255,255,0.03) 30%,
-          rgba(255,255,255,0) 60%
-        );
-
-        mix-blend-mode: screen;
-        opacity: 0.4; /* ←強いと思ったら0.6～0.8に調整して */
+        opacity: 0.4;
       }
-      /* テキストカラーの調整 (視認性向上) */
-      .code-name, footer {
-        color: #c0c0c0;
-      }
-      .app-detail {
-        color: #e0e0e0;
-      }
-      /* ボタンは視認性が高いため変更なし */
+      .code-name, footer { color: #c0c0c0; }
+      .app-detail { color: #e0e0e0; }
     }
     
   </style>
 </head>
 <body>
   <h1>📱Yu Satoのアプリ</h1>
-  <p class="card"><span class="gradient">With my Liquid Glass, I made this in 6 hours</span></p>
-  <div class="grid" id="apps"></div>
+  
+  <div style="text-align: center; margin-bottom: 20px;">
+    <p class="card" style="display:inline-block; margin:0;"><span class="gradient">With my Liquid Glass, I made this in 6 hours</span></p>
+  </div>
+
+  <!-- 分類フィルターボタン -->
+  <div class="filter-container">
+    <button class="filter-btn active" data-filter="all">すべて</button>
+    <button class="filter-btn" data-filter="internet">インターネット</button>
+    <button class="filter-btn" data-filter="utility">ユーティリティ</button>
+  </div>
+
+  <div class="grid" id="apps">
+    <!-- ローディング表示（データ取得までの間） -->
+    <p style="text-align:center; color:#888; grid-column: 1/-1;">読み込み中...</p>
+  </div>
+  
   <footer>©2025 Yu Sato</footer>
 
   <script>
-    const apps = [
-      { name: "Whisper Ultimate", path: "RPBU", codename: true, detail: "プライベートの限界突破。" },
-      { name: "Whisper Kernel", path: "RPBK", codename: true, detail: "軽さの極み。更新機能を最小限に" },
-      { name: "Downloader", path: "Dow", codename: true, detail: "ダウンロードできないを可能に。" },
-      { name: "Launcher", path: "Lau", codename: true, detail: "アプリを直観的に。" },
-      { name: "ZipTool", path: "Zip", codename: false, detail: "Zipの職人。" }
-    ];
-
+    /**
+     * アプリ1件分のHTMLを生成する関数
+     */
     async function loadApp(app) {
-      // 全てのfetch操作をPromiseの配列として定義
       const fetchPromises = [
-        fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"), // 0: URL
-        fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"), // 1: Version
+        fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"), 
+        fetch(`${app.path}/latestV.txt`).then(r => r.text()).catch(() => "N/A"), 
       ];
       
-      // codenameを持つアプリの場合は、さらに2つのfetchを追加
       if (app.codename) {
         fetchPromises.push(
-          fetch(`${app.path}/latestCN.txt`).then(r => r.text()).catch(() => ""), // 2: Codename
-          fetch(`${app.path}/latestNA.txt`).then(r => r.text()).catch(() => app.name) // 3: App Name
+          fetch(`${app.path}/latestCN.txt`).then(r => r.text()).catch(() => ""),
+          fetch(`${app.path}/latestNA.txt`).then(r => r.text()).catch(() => app.name)
         );
       }
 
-      // すべてのPromiseを並列実行
       const results = await Promise.all(fetchPromises);
       
       const url = results[0].trim();
@@ -293,10 +297,11 @@
         fetchedAppName = results[3].trim();
       }
       
-      const displayName = fetchedAppName || app.name; // fetchedAppNameが空の場合はapp.nameに戻す
+      const displayName = fetchedAppName || app.name;
+      const categories = Array.isArray(app.category) ? app.category.join(' ') : app.category;
 
       return `
-        <div class="card">
+        <div class="card" data-category="${categories}">
           <div>
             <div class="app-name">${displayName} ${ver}</div>
             ${app.codename && cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
@@ -307,10 +312,52 @@
       `;
     }
 
+    /**
+     * メイン処理
+     */
     (async () => {
       const container = document.getElementById("apps");
-      const html = await Promise.all(apps.map(loadApp));
-      container.innerHTML = html.join("");
+      
+      try {
+        // 1. apps.json を取得
+        const response = await fetch('apps.json');
+        if (!response.ok) {
+          throw new Error(`JSON load failed: ${response.status}`);
+        }
+        const apps = await response.json();
+
+        // 2. 各アプリのカード情報を生成 (latestV.txtなどの取得)
+        const html = await Promise.all(apps.map(loadApp));
+        container.innerHTML = html.join("");
+
+        // 3. フィルタリング機能のセットアップ
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const cards = container.getElementsByClassName('card');
+
+        filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            // ボタンの見た目切り替え
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            const filterValue = btn.getAttribute('data-filter');
+
+            Array.from(cards).forEach(card => {
+              const cardCategories = card.getAttribute('data-category');
+              
+              if (filterValue === 'all' || cardCategories.includes(filterValue)) {
+                card.classList.remove('hidden');
+              } else {
+                card.classList.add('hidden');
+              }
+            });
+          });
+        });
+
+      } catch (error) {
+        console.error(error);
+        container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1/-1;">データの読み込みに失敗しました。<br>Webサーバー上で実行しているか確認してください。</p>';
+      }
     })();
   </script>
 </body>
