@@ -298,12 +298,11 @@
       return `
         <div class="card">
           <div>
-            <div class="app-name">${displayName}</div>
+            <div class="app-name">${displayName} ${ver}</div>
             ${app.codename && cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
-            <div class="version">バージョン: ${ver}</div>
             <div class="app-detail">${app.detail}</div>
           </div>
-          <a class="btn" href="${url}" target="_blank">⬇️ダウンロード</a>
+          <a class="btn" href="${url}" target="_blank">入手</a>
         </div>
       `;
     }
