@@ -7,7 +7,7 @@
   <style>
     /*
      * ----------------------------------------------------
-     * アニメーションの定義
+     * 基本設定 & 背景アニメーション
      * ----------------------------------------------------
      */
     @keyframes color-shift {
@@ -16,16 +16,11 @@
       100% { background-position: 0% 0%; }
     }
 
-    /*
-     * ----------------------------------------------------
-     * グローバルスタイル
-     * ----------------------------------------------------
-     */
     body {
       font-family: "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
       color: #1d1d1f;
       margin: 0;
-      padding: 40px 10%;
+      padding: 40px 5%;
       min-height: 100vh;
       
       background-image: linear-gradient(
@@ -55,26 +50,26 @@
     }
 
     /* 
-     * カテゴリフィルターボタン
+     * カテゴリフィルター
      */
     .filter-container {
       display: flex;
       justify-content: center;
-      gap: 15px;
+      gap: 10px;
       margin-bottom: 40px;
       flex-wrap: wrap;
     }
     .filter-btn {
       background: rgba(255, 255, 255, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 8px 24px;
+      padding: 8px 20px;
       border-radius: 20px;
       cursor: pointer;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 500;
       color: #333;
       backdrop-filter: blur(5px);
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     .filter-btn:hover {
       background: rgba(255, 255, 255, 0.7);
@@ -89,12 +84,14 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      /* カード幅の最小値を確保しつつ自動配置 */
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      align-items: start; /* 高さが変わってもレイアウトが崩れないように上揃え */
     }
     
     /* 
-     * カードスタイル 
+     * カード本体 
      */
     .card {
       position: relative;
@@ -107,19 +104,20 @@
         inset 0 0 0 1px rgba(255, 255, 255, 0.6);
       border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 24px;
+      
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: transform .3s ease, box-shadow .3s ease, background .3s ease, opacity 0.3s ease;
       
-      /* 重要: オーバーレイがはみ出さないように隠す */
-      overflow: hidden; 
+      /* アニメーション設定 */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
     }
     
     .card.hidden {
       display: none;
     }
 
+    /* ノイズテクスチャ */
     .card::before {
       content: "";
       position: absolute;
@@ -131,124 +129,105 @@
       filter: blur(4px);
       pointer-events: none;
       mix-blend-mode: soft-light;
-      z-index: 1; /* 背景ノイズ */
+      z-index: 0;
     }
 
     .card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-4px);
       box-shadow:
-        0 12px 30px rgba(0,0,0,0.25),
+        0 12px 30px rgba(0,0,0,0.2),
         inset 0 0 0 1px rgba(255, 255, 255, 0.9);
       background: rgba(255, 255, 255, 0.7);
     }
-    .card::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: inherit;
-      pointer-events: none;
-      background: linear-gradient(
-        rgba(255,255,255,0.25) 0%,
-        rgba(255,255,255,0.10) 15%,
-        rgba(255,255,255,0.03) 30%,
-        rgba(255,255,255,0) 60%
-      );
-      mix-blend-mode: screen;
-      opacity: 0.7;
-      z-index: 2; /* 光沢 */
-    }
-
-    /* コンテンツのレイヤー順序調整 */
+    
+    /* カード内のコンテンツラッパー (z-index確保) */
     .card-content {
       position: relative;
-      z-index: 3;
+      z-index: 1;
+      margin-bottom: 20px;
     }
 
     .app-name {
       font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 8px;
+      font-weight: 700;
+      margin-bottom: 4px;
     }
     .code-name {
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 16px;
-    }
-    .version {
-      font-size: 1rem;
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 12px;
       font-weight: 500;
-      margin-bottom: 8px;
+      letter-spacing: 0.03em;
+    }
+    
+    /*
+     * 切り替えエリア（詳細と説明文）
+     */
+    .toggle-area {
+      cursor: pointer; /* 指アイコンにする */
+      position: relative;
+      /* タップしやすいように少しパディングを持たせる */
+      padding: 8px 0; 
+      transition: opacity 0.2s;
+    }
+    .toggle-area:active {
+      opacity: 0.7;
+    }
+
+    /* 短い詳細（デフォルト表示） */
+    .short-detail {
+      font-size: 1rem;
+      color: #333;
+      line-height: 1.5;
+      display: block; /* デフォルトで表示 */
+      
+      /* タップできることを示す装飾 */
+      text-decoration: underline dotted #999;
+      text-underline-offset: 4px;
+    }
+
+    /* 長い説明文（デフォルト非表示） */
+    .long-description {
+      display: none; /* 初期状態は非表示 */
+      font-size: 0.95rem;
+      color: #1d1d1f;
+      line-height: 1.6;
+      background: rgba(255, 255, 255, 0.4);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 5px;
+      border: 1px solid rgba(255,255,255,0.3);
     }
 
     /* 
-     * 詳細表示（ホバー/タップ）のスタイル 
+     * ★重要: activeクラスがついた時の挙動 
+     * 親要素(.card)にactiveがついたら中身を切り替える
      */
-    .detail-wrapper {
-      /* オーバーレイの位置基準を親(.card)にするため、ここはstaticのまま */
-      margin-bottom: 16px;
+    .card.active .short-detail {
+      display: none; /* 短い方は消す */
+    }
+    .card.active .long-description {
+      display: block; /* 長い方を表示（これでカードが自然に広がる） */
+      animation: fadeIn 0.3s ease;
     }
 
-    .app-detail {
-      font-size: 1rem;
-      color: #333;
-      line-height: 1.4;
-      
-      /* インタラクションできることを示すスタイル */
-      cursor: help;
-      text-decoration: underline dotted rgba(0,0,0,0.4);
-      text-underline-offset: 4px;
-      display: inline-block;
-      transition: color 0.2s;
-    }
-    .app-detail:hover {
-      color: #007aff;
-    }
-
-    /* オーバーレイ（説明文） */
-    .description-overlay {
-      position: absolute;
-      inset: 0; /* カード全体を覆う */
-      
-      background: rgba(255, 255, 255, 0.9); /* 少し不透明度を高めて読みやすく */
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      
-      padding: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: #1d1d1f;
-      text-align: left;
-      
-      opacity: 0;
-      visibility: hidden;
-      transform: scale(0.98);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      z-index: 10; /* 最前面 */
-    }
-
-    /* トリガー：detail-wrapperをホバーまたはタップしたら表示 */
-    .detail-wrapper:hover .description-overlay,
-    .detail-wrapper:active .description-overlay {
-      opacity: 1;
-      visibility: visible;
-      transform: scale(1);
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .btn {
+      position: relative;
+      z-index: 1;
       background: #007aff;
       color: white;
       text-decoration: none;
       text-align: center;
-      padding: 10px 0;
-      border-radius: 10px;
+      padding: 12px 0;
+      border-radius: 12px;
       font-weight: 600;
       transition: background .2s ease, transform .1s ease;
-      position: relative;
-      z-index: 3;
+      display: block; /* 幅いっぱいに */
     }
     .btn:hover {
       background: #0058d1;
@@ -262,9 +241,7 @@
     }
 
     /*
-     * ----------------------------------------------------
      * ダークモード対応
-     * ----------------------------------------------------
      */
     @media (prefers-color-scheme: dark) {
       body {
@@ -291,40 +268,25 @@
       }
 
       .card {
-        background: rgba(45, 45, 50, 0.3);
+        background: rgba(45, 45, 50, 0.4);
         box-shadow:
             0 6px 20px rgba(0,0,0,0.6),
             inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.05);
       }
-      .card::before {
-        opacity: 0.1;
-      }
+      .card::before { opacity: 0.15; }
       .card:hover {
-        box-shadow: 0 12px 30px rgba(0,0,0,0.9);
         background: rgba(45, 45, 50, 0.8);
       }
-      .card::after {
-        opacity: 0.4;
-      }
       
-      .code-name, footer { color: #c0c0c0; }
-      
-      .app-detail { 
-        color: #e0e0e0;
-        text-decoration-color: rgba(255,255,255,0.4);
-      }
-      .app-detail:hover {
-        color: #0a84ff;
-      }
-      
-      /* ダークモードのオーバーレイ */
-      .description-overlay {
-        background: rgba(30, 30, 35, 0.95);
+      .code-name, footer { color: #a0a0a0; }
+      .short-detail { color: #e0e0e0; }
+      .long-description {
         color: #f0f0f0;
+        background: rgba(0, 0, 0, 0.2);
+        border-color: rgba(255,255,255,0.05);
       }
     }
-    
   </style>
 </head>
 <body>
@@ -334,7 +296,6 @@
     <p class="card" style="display:inline-block; margin:0;"><span class="gradient">With my Liquid Glass, I made this in 6 hours</span></p>
   </div>
 
-  <!-- 分類フィルターボタン -->
   <div class="filter-container">
     <button class="filter-btn active" data-filter="all">すべて</button>
     <button class="filter-btn" data-filter="internet">インターネット</button>
@@ -342,16 +303,12 @@
   </div>
 
   <div class="grid" id="apps">
-    <!-- ローディング表示（データ取得までの間） -->
     <p style="text-align:center; color:#888; grid-column: 1/-1;">読み込み中...</p>
   </div>
   
   <footer>©2025 Yu Sato</footer>
 
   <script>
-    /**
-     * アプリ1件分のHTMLを生成する関数
-     */
     async function loadApp(app) {
       const fetchPromises = [
         fetch(`${app.path}/latestU.txt`).then(r => r.text()).catch(() => "N/A"), 
@@ -381,19 +338,25 @@
       const displayName = fetchedAppName || app.name;
       const categories = Array.isArray(app.category) ? app.category.join(' ') : app.category;
       
-      // JSONのdescriptionを使用（なければdetailで代用）
       const description = app.description || app.detail;
 
+      /*
+       * 修正ポイント:
+       * - toggle-area 全体に onclick イベントを設定
+       * - this.closest('.card') で親カードを取得し、activeクラスをつけ外しする
+       */
       return `
         <div class="card" data-category="${categories}">
           <div class="card-content">
             <div class="app-name">${displayName} ${ver}</div>
             ${app.codename && cn ? `<div class="code-name">Codename: ${cn}</div>` : ""}
             
-            <!-- 詳細ラッパー: これをホバーするとdescription-overlayが表示される -->
-            <div class="detail-wrapper">
-              <div class="app-detail">${app.detail}</div>
-              <div class="description-overlay">
+            <div class="toggle-area" onclick="this.closest('.card').classList.toggle('active')">
+              <div class="short-detail">
+                ${app.detail}
+                <span style="font-size:0.8rem; opacity:0.6; display:block; margin-top:4px;">(タップして詳細)</span>
+              </div>
+              <div class="long-description">
                 ${description}
               </div>
             </div>
@@ -404,39 +367,29 @@
       `;
     }
 
-    /**
-     * メイン処理
-     */
     (async () => {
       const container = document.getElementById("apps");
       
       try {
-        // 1. apps.json を取得
         const response = await fetch('apps.json');
-        if (!response.ok) {
-          throw new Error(`JSON load failed: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`JSON load failed: ${response.status}`);
         const apps = await response.json();
 
-        // 2. 各アプリのカード情報を生成
         const html = await Promise.all(apps.map(loadApp));
         container.innerHTML = html.join("");
 
-        // 3. フィルタリング機能のセットアップ
+        // フィルタリング機能
         const filterBtns = document.querySelectorAll('.filter-btn');
         const cards = container.getElementsByClassName('card');
 
         filterBtns.forEach(btn => {
           btn.addEventListener('click', () => {
-            // ボタンの見た目切り替え
             filterBtns.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
             const filterValue = btn.getAttribute('data-filter');
 
             Array.from(cards).forEach(card => {
               const cardCategories = card.getAttribute('data-category');
-              
               if (filterValue === 'all' || cardCategories.includes(filterValue)) {
                 card.classList.remove('hidden');
               } else {
@@ -448,7 +401,7 @@
 
       } catch (error) {
         console.error(error);
-        container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1/-1;">データの読み込みに失敗しました。<br>Webサーバー上で実行しているか確認してください。</p>';
+        container.innerHTML = '<p style="text-align:center; color:red; grid-column: 1/-1;">データの読み込みに失敗しました。</p>';
       }
     })();
   </script>
