@@ -30,7 +30,7 @@
   {
     "name": "ZipTool",
     "path": "Zip",
-    "codename": false,
+    "codename": true,
     "detail": "Zipの職人。",
     "category": ["utility"]
   }
